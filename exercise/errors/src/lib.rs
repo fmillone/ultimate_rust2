@@ -1,3 +1,5 @@
+use thiserror::Error;
+
 // 1. Create a DolphinError type representing the following three conditions:
 // - Hungry - The dolphin is hungry
 // - TooYoung - The dolphin is too young
@@ -13,8 +15,15 @@
 //
 // Once you have completed defining the error type correctly, you should be able to run
 // `cargo build --lib` without any build errors or warnings. Then go to main.rs and continue with #2
-
-// pub enum DolphinError...
+#[derive(Debug, Error)]
+pub enum DolphinError {
+    #[error("the name is too long ({0})")]
+    LongName(usize),
+    #[error("the Dolphin is too young")]
+    TooYoung,
+    #[error("the Dolphin is Hungry")]
+    Hungry
+}
 
 pub struct Dolphin {
     pub name: String,
@@ -25,7 +34,7 @@ pub struct Dolphin {
 impl Dolphin {
     pub fn say_your_name(&self) -> Result<String, DolphinError> {
         if self.name.len() > 10 {
-            Err(DolphinError::LongName)
+            Err(DolphinError::LongName(self.name.len()))
         } else {
             Ok(format!("Hi, my name is {} and I'm a Dolphin!", self.name))
         }
